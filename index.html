@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GP MAX | Gestão de Pendências</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M20 8h-3V4H1v13h2a3 3 0 0 0 6 0h6a3 3 0 0 0 6 0h2v-5l-3-4zM6 18.5A1.5 1.5 0 1 1 7.5 17 1.5 1.5 0 0 1 6 18.5zm12 0a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5zM17 12V9.5h2.5l2 2.5H17z'/></svg>">
+
+  <!-- Importação das fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+
+<body>
+
+  <!-- =====================================================================
+       1. TELA DE AUTENTICAÇÃO (LOGIN + CADASTRO)
+       ===================================================================== -->
+  <div id="auth-screen" class="login-wrapper">
+    <aside class="login-aside">
+      <div class="login-aside-brand">
+        <div class="login-logo-truck" title="GP MAX">
+          <div class="loader">
+            <div class="truckWrapper">
+              <div class="truckBody">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 198 93" class="trucksvg">
+                  <path stroke-width="3" stroke="#282828" fill="#F83D3D"
+                    d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z">
+                  </path>
+                  <path stroke-width="3" stroke="#282828" fill="#7D7C7C"
+                    d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z">
+                  </path>
+                  <path stroke-width="2" stroke="#282828" fill="#282828"
+                    d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z">
+                  </path>
+                  <rect stroke-width="2" stroke="#282828" fill="#FFFCAB" rx="1" height="7" width="5" y="63" x="187">
+                  </rect>
+                  <rect stroke-width="2" stroke="#282828" fill="#282828" rx="1" height="11" width="4" y="81" x="193">
+                  </rect>
+                  <rect stroke-width="3" stroke="#282828" fill="#DFDFDF" rx="2.5" height="90" width="121" y="1.5"
+                    x="6.5"></rect>
+
+                  <text x="67" y="58" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="28"
+                    fill="#1e293b" text-anchor="middle" letter-spacing="2">GP</text>
+
+                  <rect stroke-width="2" stroke="#282828" fill="#DFDFDF" rx="2" height="4" width="6" y="84" x="1">
+                  </rect>
+                </svg>
+              </div>
+              <div class="truckTires">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="tiresvg">
+                  <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15"></circle>
+                  <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="tiresvg">
+                  <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15"></circle>
+                  <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+                </svg>
+              </div>
+              <div class="road"></div>
+              <svg xml:space="preserve" viewBox="0 0 453.459 453.459" xmlns="http://www.w3.org/2000/svg"
+                class="lampPost">
+                <path
+                  d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993 c-1.65,5.146-2.507,10.54-2.507,16.017c0,28.956,23.558,52.514,52.514,52.514c28.956,0,52.514-23.558,52.514-52.514 c0-5.478-0.856-10.872-2.506-16.017h9.992c0-9.354-19.352-17.204-45.463-19.366v-8.954h-6.149C200.189,38.779,223.924,16,252.882,16 c29.952,0,54.32,24.368,54.32,54.32c0,28.774-11.078,37.009-25.105,47.437c-17.444,12.968-37.216,27.667-37.216,78.884v113.914 h-0.797c-5.068,0-9.174,4.108-9.174,9.177c0,2.844,1.293,5.383,3.321,7.066c-3.432,27.933-26.851,95.744-8.226,115.459v11.202h45.75 v-11.202c18.625-19.715-4.794-87.527-8.227-115.459c2.029-1.683,3.322-4.223,3.322-7.066c0-5.068-4.107-9.177-9.176-9.177h-0.795 V196.641c0-43.174,14.942-54.283,30.762-66.043c14.793-10.997,31.559-23.461,31.559-60.277C323.202,31.545,291.656,0,252.882,0z M232.77,111.694c0,23.442-19.071,42.514-42.514,42.514c-23.442,0-42.514-19.072-42.514-42.514c0-5.531,1.078-10.957,3.141-16.017 h78.747C231.693,100.736,232.77,106.162,232.77,111.694z">
+                </path>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="login-brand-text">
+          <h1>GP MAX</h1>
+          <span class="login-subtitle">Gestão Integrada de Pendências</span>
+        </div>
+      </div>
+
+      <div class="login-aside-content">
+        <h2>Centralize e resolva pendências operacionais em tempo real.</h2>
+        <p>Substitua mensagens dispersas por um fluxo estruturado com filas automáticas, histórico auditável de
+          tratativas, controle de SLA e visibilidade completa entre equipes.</p>
+      </div>
+
+      <div class="login-aside-footer">
+        &copy; 2026 GP MAX. Todos os direitos reservados.
+      </div>
+    </aside>
+
+    <main class="login-form-container">
+
+      <div id="login-form-block">
+        <div class="login-form-header">
+          <h3>Acessar Plataforma</h3>
+          <p>Informe suas credenciais corporativas para entrar no sistema.</p>
+        </div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label" for="login-email">E-mail corporativo <span class="required">*</span></label>
+            <input type="email" id="login-email" class="form-control" placeholder="ex: consultor@empresa.com" required
+              autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-password">Senha de acesso <span class="required">*</span></label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required
+              autocomplete="current-password">
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; margin-top:-0.5rem; margin-bottom:0.75rem;">
+            <button type="button" class="auth-link-btn" onclick="handleForgotPassword()">
+              Esqueci minha senha
+            </button>
+          </div>
+
+          <button type="submit" id="btn-login-submit" class="btn btn-primary btn-block" style="margin-top: 0.5rem;">
+            <span>Entrar no Sistema</span>
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          Não tem conta ainda?
+          <button type="button" class="auth-link-btn auth-link-strong" onclick="showRegisterForm()">
+            Criar uma conta agora
+          </button>
+        </div>
+      </div>
+
+      <div id="register-form-block" style="display: none;">
+        <div class="login-form-header">
+          <h3>Criar Conta de Acesso</h3>
+          <p>Cadastre-se para abrir solicitações de atendimento. Seu acesso será criado como <strong>Consultor de
+              Vendas</strong>.</p>
+        </div>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Nome completo <span class="required">*</span></label>
+            <input type="text" id="reg-name" class="form-control" placeholder="ex: João da Silva" required
+              autocomplete="name" minlength="3">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">E-mail corporativo <span class="required">*</span></label>
+            <input type="email" id="reg-email" class="form-control" placeholder="ex: joao.silva@empresa.com" required
+              autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Senha de acesso <span class="required">*</span></label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Mínimo 6 caracteres" required
+              autocomplete="new-password" minlength="6">
+            <div class="form-hint">O Firebase exige senhas com pelo menos 6 caracteres.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password-confirm">Confirmar senha <span class="required">*</span></label>
+            <input type="password" id="reg-password-confirm" class="form-control" placeholder="Repita a senha" required
+              autocomplete="new-password" minlength="6">
+          </div>
+
+          <button type="submit" id="btn-register-submit" class="btn btn-primary btn-block" style="margin-top: 0.75rem;">
+            <span>Criar Conta</span>
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          Já tem conta?
+          <button type="button" class="auth-link-btn auth-link-strong" onclick="showLoginForm()">
+            Voltar para o login
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- =====================================================================
+       2. APLICAÇÃO PRINCIPAL
+       ===================================================================== -->
+  <div id="app-layout" style="display: none;">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-truck" title="GP MAX">
+          <div class="loader">
+            <div class="truckWrapper">
+              <div class="truckBody">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 198 93" class="trucksvg">
+                  <path stroke-width="3" stroke="#282828" fill="#F83D3D"
+                    d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z">
+                  </path>
+                  <path stroke-width="3" stroke="#282828" fill="#7D7C7C"
+                    d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z">
+                  </path>
+                  <path stroke-width="2" stroke="#282828" fill="#282828"
+                    d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z">
+                  </path>
+                  <rect stroke-width="2" stroke="#282828" fill="#FFFCAB" rx="1" height="7" width="5" y="63" x="187">
+                  </rect>
+                  <rect stroke-width="2" stroke="#282828" fill="#282828" rx="1" height="11" width="4" y="81" x="193">
+                  </rect>
+                  <rect stroke-width="3" stroke="#282828" fill="#DFDFDF" rx="2.5" height="90" width="121" y="1.5"
+                    x="6.5"></rect>
+
+                  <text x="67" y="58" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="28"
+                    fill="#1e293b" text-anchor="middle" letter-spacing="2">GP</text>
+
+                  <rect stroke-width="2" stroke="#282828" fill="#DFDFDF" rx="2" height="4" width="6" y="84" x="1">
+                  </rect>
+                </svg>
+              </div>
+              <div class="truckTires">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="tiresvg">
+                  <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15"></circle>
+                  <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="tiresvg">
+                  <circle stroke-width="3" stroke="#282828" fill="#282828" r="13.5" cy="15" cx="15"></circle>
+                  <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+                </svg>
+              </div>
+              <div class="road"></div>
+              <svg xml:space="preserve" viewBox="0 0 453.459 453.459" xmlns="http://www.w3.org/2000/svg"
+                class="lampPost">
+                <path
+                  d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993 c-1.65,5.146-2.507,10.54-2.507,16.017c0,28.956,23.558,52.514,52.514,52.514c28.956,0,52.514-23.558,52.514-52.514 c0-5.478-0.856-10.872-2.506-16.017h9.992c0-9.354-19.352-17.204-45.463-19.366v-8.954h-6.149C200.189,38.779,223.924,16,252.882,16 c29.952,0,54.32,24.368,54.32,54.32c0,28.774-11.078,37.009-25.105,47.437c-17.444,12.968-37.216,27.667-37.216,78.884v113.914 h-0.797c-5.068,0-9.174,4.108-9.174,9.177c0,2.844,1.293,5.383,3.321,7.066c-3.432,27.933-26.851,95.744-8.226,115.459v11.202h45.75 v-11.202c18.625-19.715-4.794-87.527-8.227-115.459c2.029-1.683,3.322-4.223,3.322-7.066c0-5.068-4.107-9.177-9.176-9.177h-0.795 V196.641c0-43.174,14.942-54.283,30.762-66.043c14.793-10.997,31.559-23.461,31.559-60.277C323.202,31.545,291.656,0,252.882,0z M232.77,111.694c0,23.442-19.071,42.514-42.514,42.514c-23.442,0-42.514-19.072-42.514-42.514c0-5.531,1.078-10.957,3.141-16.017 h78.747C231.693,100.736,232.77,106.162,232.77,111.694z">
+                </path>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-title">
+          <h1>GP MAX</h1>
+          <span>Vendas & Operações</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title internal-only">Gestão Interna</div>
+        <a class="nav-item active internal-only" data-view="view-dashboard" onclick="navigate('view-dashboard')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          <span>Dashboard Geral</span>
+        </a>
+
+        <!-- TODAS AS SOLICITAÇÕES (Apenas Admin) -->
+        <a class="nav-item role-admin-only" data-view="view-internal-list" onclick="navigate('view-internal-list')"
+          style="display: none;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+          <span>Todas as Solicitações</span>
+          <span class="nav-badge" id="badge-total-requests">0</span>
+        </a>
+
+        <!-- FILA CANCELAMENTOS (ERP e Admin) -->
+        <a class="nav-item internal-only role-erp-only" data-view="view-queue-cancel"
+          onclick="filterByQueueNav('CANCELAMENTOS')" style="display: none;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Fila Cancelamentos</span>
+          <span class="nav-badge" id="badge-queue-cancel" style="background:#dc2626; color:#fff;">0</span>
+        </a>
+
+        <!-- FILA ENTREGAS (Logística e Admin) -->
+        <a class="nav-item internal-only role-logistica-only" data-view="view-queue-delivery"
+          onclick="filterByQueueNav('ENTREGAS / EXPEDIÇÃO')" style="display: none;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>Fila Entregas / Expedição</span>
+          <span class="nav-badge" id="badge-queue-delivery" style="background:#059669; color:#fff;">0</span>
+        </a>
+
+        <div class="nav-section-title consultant-only">Área de Vendas</div>
+        <a class="nav-item consultant-only" data-view="view-consultant-list" onclick="navigate('view-consultant-list')"
+          style="display: none;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <span>Minhas Solicitações</span>
+          <span class="nav-badge" id="badge-my-requests">0</span>
+        </a>
+        <a class="nav-item" data-view="view-new-request" onclick="navigate('view-new-request')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span style="font-weight: 500; color: #38bdf8;">+ Nova Solicitação</span>
+        </a>
+
+        <div class="nav-section-title role-admin-only" style="display: none;">Administração</div>
+        <a class="nav-item role-admin-only" data-view="view-admin-users" onclick="navigate('view-admin-users')"
+          style="display: none;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <span>Gestão de Usuários</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar" id="sidebar-user-avatar">CS</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-user-name">Usuário</div>
+          <span class="user-role-badge" id="sidebar-user-role">Consultor</span>
+        </div>
+        <button type="button" class="btn-logout" title="Sair do sistema" onclick="handleLogout()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-btn" onclick="toggleSidebar()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <div class="page-title-box">
+            <h2 id="current-view-title">Dashboard de Atendimento</h2>
+            <p id="current-view-subtitle">Visão operacional consolidada de pendências.</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="btn btn-outline btn-sm btn-sweep" onclick="resetDefaultData()"
+            title="Recarrega dados do Supabase">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Atualizar Dados</span>
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="navigate('view-new-request')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Nova Demanda</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="content-area">
+
+        <!-- ===================== VIEW 1: DASHBOARD (SÓ KPIS E GRÁFICOS) ===================== -->
+        <section id="view-dashboard" class="app-view">
+          <div class="kpi-grid">
+            <div class="kpi-card kpi-total">
+              <div class="kpi-info">
+                <h4>Total Demandas</h4>
+                <div class="kpi-value" id="kpi-total-val">0</div>
+              </div>
+              <div class="kpi-icon"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-waiting">
+              <div class="kpi-info">
+                <h4>Aguardando Atendimento</h4>
+                <div class="kpi-value" id="kpi-waiting-val">0</div>
+              </div>
+              <div class="kpi-icon"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-progress">
+              <div class="kpi-info">
+                <h4>Em Andamento / Análise</h4>
+                <div class="kpi-value" id="kpi-progress-val">0</div>
+              </div>
+              <div class="kpi-icon"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-concluded">
+              <div class="kpi-info">
+                <h4>Tratativas Concluídas</h4>
+                <div class="kpi-value" id="kpi-concluded-val">0</div>
+              </div>
+              <div class="kpi-icon"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-sla">
+              <div class="kpi-info">
+                <h4>SLA Alerta / Vencido</h4>
+                <div class="kpi-value" id="kpi-sla-val" style="color: #dc2626;">0</div>
+              </div>
+              <div class="kpi-icon"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg></div>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h3>Distribuição por Fila Operacional</h3>
+                <span style="font-size: 0.75rem; color: #64748b;">Roteamento Automático</span>
+              </div>
+              <div class="progress-bar-group" id="queues-progress-group"></div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h3>Demandas por Categoria</h3>
+                <span style="font-size: 0.75rem; color: #64748b;">Volume Total</span>
+              </div>
+              <div class="progress-bar-group" id="categories-progress-group"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== VIEW 1.1: TODAS AS SOLICITAÇÕES / FILAS (TABELA E FILTROS) ===================== -->
+        <section id="view-internal-list" class="app-view" style="display: none;">
+          <div class="filter-panel">
+            <div class="filter-panel-header">
+              <div class="filter-panel-title">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                <span>Filtros Combináveis de Gestão</span>
+              </div>
+              <div class="filter-actions">
+                <button type="button" class="btn btn-outline btn-sm btn-sweep" onclick="clearFilters()">Limpar
+                  Filtros</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="applyFilters()">Aplicar Filtros</button>
+              </div>
+            </div>
+
+            <div class="filter-grid">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Busca Pedido / Cliente</label>
+                <input type="text" id="filter-search" class="form-control"
+                  placeholder="Nº pedido, cliente ou protocolo...">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Fila Responsável</label>
+                <select id="filter-queue" class="form-control" onchange="applyFilters()">
+                  <option value="">Todas as Filas</option>
+                  <option value="CANCELAMENTOS">CANCELAMENTOS</option>
+                  <option value="ENTREGAS / EXPEDIÇÃO">ENTREGAS / EXPEDIÇÃO</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Categoria</label>
+                <select id="filter-category" class="form-control" onchange="applyFilters()">
+                  <option value="">Todas as Categorias</option>
+                  <option value="cancelamento">Cancelamento de pedido</option>
+                  <option value="consulta_entrega">Consulta de entrega ou atraso</option>
+                  <option value="verificacao_rota">Verificação de pedido em rota</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Status da Solicitação</label>
+                <select id="filter-status" class="form-control" onchange="applyFilters()">
+                  <option value="">Todos os Status</option>
+                  <option value="Aberto">Aberto</option>
+                  <option value="Em análise">Em análise</option>
+                  <option value="Aguardando informação">Aguardando informação</option>
+                  <option value="Em andamento">Em andamento</option>
+                  <option value="Resolvido">Resolvido</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Consultor Solicitante</label>
+                <select id="filter-consultant" class="form-control" onchange="applyFilters()">
+                  <option value="">Todos os Consultores</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Responsável Interno</label>
+                <select id="filter-assigned" class="form-control" onchange="applyFilters()">
+                  <option value="">Todos os Responsáveis</option>
+                  <option value="unassigned">Sem Responsável (Aberto)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Data Inicial</label>
+                <input type="date" id="filter-date-from" class="form-control" onchange="applyFilters()">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Data Final</label>
+                <input type="date" id="filter-date-to" class="form-control" onchange="applyFilters()">
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header-bar">
+              <div class="table-header-left">
+                <h3 style="font-size: 1rem; margin: 0;">Demandas Operacionais</h3>
+                <span class="table-count-badge" id="table-results-counter">Carregando...</span>
+              </div>
+              <div>
+                <button type="button" class="btn btn-outline btn-sm btn-sweep" onclick="exportToCSV()">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Exportar Dados</span>
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Protocolo</th>
+                    <th>Abertura</th>
+                    <th>Consultor</th>
+                    <th>Cliente</th>
+                    <th>Pedido</th>
+                    <th>Categoria</th>
+                    <th>Fila</th>
+                    <th>Status</th>
+                    <th>Responsável</th>
+                    <th>Última Atualização</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="internal-requests-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== VIEW 2: ÁREA DO CONSULTOR ===================== -->
+        <section id="view-consultant-list" class="app-view" style="display: none;">
+          <div
+            style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; padding: 1.75rem 2rem; border-radius: var(--radius-lg); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-custom);">
+            <div>
+              <h2
+                style="color: #fff; font-size: 1.5rem; margin-bottom: 0.35rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600;"
+                id="consultant-welcome-title">Minhas Solicitações de Atendimento</h2>
+              <p style="color: #bfdbfe; font-size: 0.9rem;">Acompanhe o andamento das suas demandas e visualize os
+                retornos da equipe interna em tempo real.</p>
+            </div>
+            <button type="button" class="btn btn-success" onclick="navigate('view-new-request')">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Abrir Nova Solicitação</span>
+            </button>
+          </div>
+
+          <div
+            style="background: var(--color-bg-card); padding: 1rem 1.25rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-custom); margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 250px;">
+              <input type="text" id="consultant-search-input" class="form-control"
+                placeholder="Buscar por número do pedido, cliente ou protocolo..." oninput="handleConsultantSearch()">
+            </div>
+            <div style="width: 220px;">
+              <select id="consultant-status-filter" class="form-control" onchange="handleConsultantSearch()">
+                <option value="">Todos os Meus Status</option>
+                <option value="Aberto">Aberto</option>
+                <option value="Em análise">Em análise</option>
+                <option value="Aguardando informação">Aguardando informação</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Resolvido">Resolvido</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header-bar">
+              <div class="table-header-left">
+                <h3 style="font-size: 1rem; margin: 0;">Histórico de Aberturas</h3>
+                <span class="table-count-badge" id="consultant-counter">0 demandas</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Protocolo</th>
+                    <th>Data Abertura</th>
+                    <th>Pedido</th>
+                    <th>Cliente</th>
+                    <th>Tipo de Pendência</th>
+                    <th>Fila Encaminhada</th>
+                    <th>Status Atual</th>
+                    <th>Tratativa da Equipe</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="consultant-requests-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== VIEW 3: NOVA SOLICITAÇÃO ===================== -->
+        <section id="view-new-request" class="app-view" style="display: none;">
+          <div class="form-card">
+            <div class="form-card-header">
+              <h3>Abertura de Solicitação de Atendimento</h3>
+              <p>Selecione o tipo de pendência abaixo. O sistema encaminhará automaticamente para a fila correta.</p>
+            </div>
+
+            <form id="new-request-form" onsubmit="handleCreateRequest(event)">
+              <div class="form-card-body">
+                <div class="form-group">
+                  <label class="form-label">Selecione o Tipo de Pendência <span class="required">*</span></label>
+                  <div class="category-selector-grid">
+                    <label class="category-radio-card active" id="card-cat-cancel"
+                      onclick="selectCategory('cancelamento')">
+                      <input type="radio" name="category_selection" value="cancelamento" checked>
+                      <div class="category-card-icon icon-cat-cancel">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                          viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
+                      <span class="category-card-title">Cancelamento de Pedido</span>
+                      <span class="category-card-queue" style="color: #e11d48;">Fila: Cancelamentos</span>
+                    </label>
+                    <label class="category-radio-card" id="card-cat-delivery"
+                      onclick="selectCategory('consulta_entrega')">
+                      <input type="radio" name="category_selection" value="consulta_entrega">
+                      <div class="category-card-icon icon-cat-delivery">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                          viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <span class="category-card-title">Consulta de Entrega ou Atraso</span>
+                      <span class="category-card-queue" style="color: #059669;">Fila: Entregas / Expedição</span>
+                    </label>
+                    <label class="category-radio-card" id="card-cat-route" onclick="selectCategory('verificacao_rota')">
+                      <input type="radio" name="category_selection" value="verificacao_rota">
+                      <div class="category-card-icon icon-cat-route">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                          viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                        </svg>
+                      </div>
+                      <span class="category-card-title">Verificação de Pedido em Rota</span>
+                      <span class="category-card-queue" style="color: #0284c7;">Fila: Entregas / Expedição</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="req-order-number">Número do Pedido <span
+                        class="required">*</span></label>
+                    <input type="text" id="req-order-number" class="form-control" placeholder="ex: 10452" required>
+                    <div class="form-hint">Número gerado no momento da digitação comercial.</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="req-client-name">Razão Social / Nome do Cliente <span
+                        class="required">*</span></label>
+                    <input type="text" id="req-client-name" class="form-control"
+                      placeholder="ex: ABC Distribuidora de Alimentos Ltda" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="req-client-code">Código do Cliente no ERP (Opcional)</label>
+                    <input type="text" id="req-client-code" class="form-control" placeholder="ex: CLI-8821">
+                  </div>
+                  <div class="form-group" id="group-order-date" style="display: none;">
+                    <label class="form-label" for="req-order-typed-date">Data em que o Pedido foi Digitado <span
+                        class="required">*</span></label>
+                    <input type="date" id="req-order-typed-date" class="form-control">
+                    <div class="form-hint">Essencial para a equipe interna investigar prazo de faturamento e entrega.
+                    </div>
+                  </div>
+                  <div class="form-group" id="group-cancel-reason">
+                    <label class="form-label" for="req-cancel-reason">Motivo do Cancelamento <span
+                        class="required">*</span></label>
+                    <select id="req-cancel-reason" class="form-control">
+                      <option value="">Selecione o motivo...</option>
+                      <option value="Desistência do cliente">Desistência do cliente</option>
+                      <option value="Erro na digitação de itens ou quantidade">Erro na digitação de itens ou quantidade
+                      </option>
+                      <option value="Condição de pagamento divergente">Condição de pagamento divergente</option>
+                      <option value="Duplicidade de pedido">Duplicidade de pedido</option>
+                      <option value="Inadimplência ou bloqueio de crédito">Inadimplência ou bloqueio de crédito</option>
+                      <option value="Preço incorreto cadastrado">Preço incorreto cadastrado</option>
+                      <option value="Outro motivo operacional">Outro motivo operacional</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="req-description">Descrição Complementar / Justificativa</label>
+                  <textarea id="req-description" class="form-control" rows="3"
+                    placeholder="Detalhes adicionais, particularidades do cliente, horários de recebimento, etc..."></textarea>
+                </div>
+
+                <div
+                  style="background: #f8fafc; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                  <svg width="20" height="20" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span style="font-size: 0.8rem; color: #475569;" id="auto-route-notice">
+                    Esta solicitação será direcionada automaticamente para a fila <strong>CANCELAMENTOS</strong> (ERP /
+                    Faturamento).
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-footer">
+                <button type="button" class="btn btn-secondary btn-sweep" onclick="navigateBack()">Cancelar</button>
+                <button type="submit" id="btn-submit-request" class="btn btn-primary">
+                  <span>Registrar Solicitação</span>
+                  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ===================== VIEW 4: ADMIN ===================== -->
+        <section id="view-admin-users" class="app-view" style="display: none;">
+          <div
+            style="background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%); color: #fff; padding: 1.75rem 2rem; border-radius: var(--radius-lg); margin-bottom: 2rem; box-shadow: var(--shadow-custom);">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h2
+                  style="color: #fff; font-size: 1.5rem; margin-bottom: 0.35rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600;">
+                  Gestão de Usuários e Permissões</h2>
+                <p style="color: #e0e7ff; font-size: 0.9rem;">Defina o tipo de acesso de cada usuário cadastrado no
+                  sistema.</p>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sweep" onclick="loadAdminUsers()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Atualizar Lista</span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+            <svg width="20" height="20" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"
+              style="flex-shrink:0; margin-top:2px;">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div style="font-size: 0.85rem; color: #1e40af;">
+              <strong>Como funciona:</strong> Altere o papel de cada usuário na coluna "Alterar Papel".
+              A mudança é aplicada no Firestore e o usuário precisa <strong>deslogar e logar novamente</strong> para as
+              permissões atualizarem.
+              Você não consegue alterar seu próprio papel por segurança.
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header-bar">
+              <div class="table-header-left">
+                <h3 style="font-size: 1rem; margin: 0;">Usuários Cadastrados</h3>
+                <span class="table-count-badge" id="admin-users-counter">Carregando...</span>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Departamento</th>
+                    <th>Cadastro</th>
+                    <th>Papel Atual</th>
+                    <th>Alterar Papel</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                  <tr>
+                    <td colspan="6" style="text-align:center; padding:2rem;">Carregando usuários...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- =====================================================================
+       3. MODAL DE DETALHES
+       ===================================================================== -->
+  <div class="modal-overlay" id="modal-request-details" onclick="handleModalBackdropClick(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span style="font-size: 1.15rem; font-weight: 600; font-family: 'Geist', sans-serif;"
+            id="modal-protocol">PEND-2026-0000</span>
+          <span class="badge" id="modal-status-badge">Aberto</span>
+          <span class="queue-badge" id="modal-queue-badge">Fila</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeDetailsModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-meta-grid">
+          <div>
+            <div class="meta-item-label">Consultor Solicitante</div>
+            <div class="meta-item-value" id="modal-consultant-name">-</div>
+          </div>
+          <div>
+            <div class="meta-item-label">Data de Abertura</div>
+            <div class="meta-item-value" id="modal-created-at">-</div>
+          </div>
+          <div>
+            <div class="meta-item-label">Número do Pedido</div>
+            <div class="meta-item-value" id="modal-order-number">-</div>
+          </div>
+          <div>
+            <div class="meta-item-label">Responsável Interno</div>
+            <div class="meta-item-value" id="modal-assigned-name">Não atribuído</div>
+          </div>
+        </div>
+
+        <div
+          style="background: #ffffff; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4
+            style="font-size: 0.9rem; margin-bottom: 0.75rem; color: #1e293b; display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Informações Registradas pelo Consultor</span>
+          </h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+            <div>
+              <span style="font-size: 0.75rem; color: #64748b; font-weight: 500;">Cliente:</span>
+              <div style="font-weight: 600; font-size: 0.9rem;" id="modal-client-info">-</div>
+            </div>
+            <div id="modal-extra-field-box">
+              <span style="font-size: 0.75rem; color: #64748b; font-weight: 500;" id="modal-extra-label">Detalhe
+                Específico:</span>
+              <div style="font-weight: 600; font-size: 0.9rem;" id="modal-extra-value">-</div>
+            </div>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; color: #64748b; font-weight: 500;">Descrição / Observações da
+              Demanda:</span>
+            <div
+              style="background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-sm); margin-top: 0.25rem; font-size: 0.85rem; color: #334155; line-height: 1.4; font-weight: 400;"
+              id="modal-description">-</div>
+          </div>
+        </div>
+
+        <div id="consultant-resolution-display"
+          style="display: none; background: #f0fdf4; border: 1px solid #86efac; border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4
+            style="font-size: 0.9rem; color: #166534; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Retorno Oficial da Equipe Interna</span>
+          </h4>
+          <div style="font-size: 0.9rem; color: #14532d; line-height: 1.5; font-weight: 400;"
+            id="consultant-resolution-text">
+            Nenhuma resposta conclusiva registrada até o momento.
+          </div>
+        </div>
+
+        <div id="internal-action-panel" class="internal-action-box highlight" style="display: none;">
+          <div class="action-box-title">
+            <svg width="20" height="20" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>Área de Tratativa e Atualização (Equipe ERP / Logística)</span>
+          </div>
+
+          <form id="tratativa-form" onsubmit="handleSaveTratativa(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="trat-status">Atualizar Status <span class="required">*</span></label>
+                <select id="trat-status" class="form-control" onchange="handleTratativaStatusChange()">
+                  <option value="Aberto">Aberto</option>
+                  <option value="Em análise">Em análise</option>
+                  <option value="Aguardando informação">Aguardando informação</option>
+                  <option value="Em andamento">Em andamento</option>
+                  <option value="Resolvido">Resolvido (Exige resposta conclusiva)</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="trat-assigned">Atribuir Responsável</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <select id="trat-assigned" class="form-control">
+                    <option value="">Não atribuído</option>
+                  </select>
+                  <button type="button" class="btn btn-secondary btn-sm btn-sweep" onclick="assignToMe()"
+                    title="Assumir chamado para mim">Assumir</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="trat-logistics-fields"
+              style="display: none; background: #ffffff; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.85rem; margin-bottom: 1rem;">
+              <span
+                style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase; color: #059669; display: block; margin-bottom: 0.5rem;">Diagnóstico
+                Operacional da Expedição:</span>
+              <div class="form-row">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" for="trat-situation">Situação Encontrada</label>
+                  <select id="trat-situation" class="form-control">
+                    <option value="">Selecione a situação real...</option>
+                    <option value="Em processamento">Em processamento</option>
+                    <option value="Faturado">Faturado</option>
+                    <option value="Expedido">Expedido</option>
+                    <option value="Em rota de entrega">Em rota de entrega</option>
+                    <option value="Entregue">Entregue</option>
+                    <option value="Com ocorrência">Com ocorrência</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" for="trat-departure-date">Data/Hora Saída para Entrega (Se em rota)</label>
+                  <input type="text" id="trat-departure-date" class="form-control" placeholder="ex: 27/10/2026 07:30">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" id="group-resolution-notes">
+              <label class="form-label" for="trat-resolution-notes">
+                Resposta / Tratativa Conclusiva para o Consultor <span class="required" id="res-notes-required">*</span>
+              </label>
+              <textarea id="trat-resolution-notes" class="form-control" rows="3"
+                placeholder="Explique de forma clara a tratativa realizada..."></textarea>
+              <div class="form-hint">Obrigatório ao marcar como 'Resolvido'.</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="trat-comment">Comentário Adicional para o Histórico de Auditoria</label>
+              <input type="text" id="trat-comment" class="form-control"
+                placeholder="Nota interna ou justificativa da alteração...">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+              <button type="submit" id="btn-save-tratativa" class="btn btn-primary">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Salvar Atualização</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div>
+          <h4
+            style="font-size: 0.95rem; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Linha do Tempo e Histórico de Alterações</span>
+          </h4>
+          <div class="timeline" id="modal-timeline"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="firebase-config.js"></script>
+  <script src="firestore-service.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

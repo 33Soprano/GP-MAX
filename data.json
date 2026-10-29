@@ -1,0 +1,129 @@
+{
+  "system_info": {
+    "name": "Sistema de Gestão de Pendências - Vendas, ERP e Logística",
+    "version": "2.0.0",
+    "updated_at": "2026-10-27T18:30:00Z"
+  },
+  "roles": [
+    {
+      "id": "consultor",
+      "name": "Consultor de Vendas",
+      "description": "Abertura e consulta de suas próprias solicitações de atendimento."
+    },
+    {
+      "id": "interno",
+      "name": "Equipe Interna (ERP e Logística)",
+      "description": "Painel de gestão com acesso a todas as solicitações, filtros, atribuição e tratativas."
+    }
+  ],
+  "queues": [
+    {
+      "id": "CANCELAMENTOS",
+      "name": "Fila Cancelamentos",
+      "responsible_department": "ERP / Faturamento"
+    },
+    {
+      "id": "ENTREGAS / EXPEDIÇÃO",
+      "name": "Fila Entregas / Expedição",
+      "responsible_department": "Logística e Expedição"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cancelamento",
+      "name": "Cancelamento de pedido",
+      "queue": "CANCELAMENTOS",
+      "description": "Solicitação para estorno ou cancelamento de pedido de venda.",
+      "required_fields": [
+        "order_number",
+        "client_name",
+        "cancel_reason"
+      ]
+    },
+    {
+      "id": "consulta_entrega",
+      "name": "Consulta de entrega ou atraso",
+      "queue": "ENTREGAS / EXPEDIÇÃO",
+      "description": "Verificação de status de entrega, atrasos e previsão de chegada.",
+      "required_fields": [
+        "order_number",
+        "client_name",
+        "order_typed_date"
+      ]
+    },
+    {
+      "id": "verificacao_rota",
+      "name": "Verificação de pedido em rota",
+      "queue": "ENTREGAS / EXPEDIÇÃO",
+      "description": "Confirmação se o pedido já saiu para entrega e está efetivamente em trânsito.",
+      "required_fields": [
+        "order_number",
+        "client_name",
+        "order_typed_date"
+      ]
+    }
+  ],
+  "statuses": [
+    {
+      "id": "Aberto",
+      "name": "Aberto",
+      "color": "#2563eb",
+      "badge_class": "badge-open",
+      "description": "Solicitação registrada e aguardando atendimento."
+    },
+    {
+      "id": "Em análise",
+      "name": "Em análise",
+      "color": "#d97706",
+      "badge_class": "badge-analyzing",
+      "description": "Equipe interna está verificando o caso."
+    },
+    {
+      "id": "Aguardando informação",
+      "name": "Aguardando informação",
+      "color": "#9333ea",
+      "badge_class": "badge-waiting",
+      "description": "Atendimento depende de dados adicionais."
+    },
+    {
+      "id": "Em andamento",
+      "name": "Em andamento",
+      "color": "#0284c7",
+      "badge_class": "badge-progress",
+      "description": "Tratativa operacional em execução."
+    },
+    {
+      "id": "Resolvido",
+      "name": "Resolvido",
+      "color": "#059669",
+      "badge_class": "badge-resolved",
+      "description": "A equipe concluiu a tratativa com resposta obrigatória."
+    },
+    {
+      "id": "Cancelado",
+      "name": "Cancelado",
+      "color": "#dc2626",
+      "badge_class": "badge-cancelled",
+      "description": "Solicitação encerrada sem continuidade."
+    }
+  ],
+  "users": [],
+  "cancel_reasons": [
+    "Desistência do cliente",
+    "Erro na digitação de itens ou quantidade",
+    "Condição de pagamento divergente",
+    "Duplicidade de pedido",
+    "Inadimplência ou bloqueio de crédito",
+    "Preço incorreto cadastrado",
+    "Outro motivo operacional"
+  ],
+  "operational_situations": [
+    "Em processamento",
+    "Faturado",
+    "Expedido",
+    "Em rota de entrega",
+    "Entregue",
+    "Com ocorrência"
+  ],
+  "requests": []
+}
